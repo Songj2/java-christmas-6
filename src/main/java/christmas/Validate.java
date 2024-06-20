@@ -8,7 +8,7 @@ public class Validate {
         return validateNumber(date)&& validateRange(Integer.parseInt(date));
     }
 
-    private boolean validateNumber(String date){
+    public boolean validateNumber(String date){
         try {
             if (date.matches("^[0-9]+$")){
                 return true;
@@ -31,4 +31,5 @@ public class Validate {
         }
         return true;
     }
+
 }

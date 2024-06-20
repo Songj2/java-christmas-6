@@ -11,4 +11,12 @@ public enum Dessert {
         this.price = price;
         this.menu = menu;
     }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public String getMenu() {
+        return menu;
+    }
 }

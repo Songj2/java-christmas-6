@@ -12,4 +12,12 @@ public enum Drink {
         this.price = price;
         this.menu = menu;
     }
+
+    public String getMenu() {
+        return menu;
+    }
+
+    public int getPrice() {
+        return price;
+    }
 }
