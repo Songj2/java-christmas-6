@@ -31,7 +31,7 @@ public class Order {
     }
 
     private boolean validateMenu(String menu) {
-        if (menuList.getAllMenuList().contains(menu)){
+        if (menuList.getAllMenuList().containsKey(menu)){
             return true;
         }
         throw new IllegalArgumentException(Messages.ERROR_ORDER.getMessage()+"없는 메뉴");
