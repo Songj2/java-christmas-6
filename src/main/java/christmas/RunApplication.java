@@ -1,7 +1,6 @@
 package christmas;
 
 import christmas.domain.EventPrice;
-import christmas.domain.Menu;
 import christmas.domain.MenuList;
 import christmas.domain.Messages;
 
@@ -30,7 +29,7 @@ public class RunApplication {
             benefitList.put("특별 할인", eventController.specialDiscount(date));
             benefitList.put(("증정 이벤트"), eventController.presentationEvent(totalBefore));
         }
-        int discountAmount= eventController.calTotalDiscount(benefitList);
+        int discountAmount = eventController.calTotalDiscount(benefitList);
         OutputViewer outputViewer = new OutputViewer();
         outputViewer.printMenu(orders);
         outputViewer.printPrice(totalBefore, Messages.OUTPUT_DISCOUNT_BEFORE.getMessage());
@@ -39,9 +38,9 @@ public class RunApplication {
 
         outputViewer.printPrice(discountAmount, Messages.OUTPUT_BENEFITS_PRICE.getMessage());
 
-        int paidMoney= discountAmount;
-        if (benefitList.containsKey("증정 이벤트")){
-            paidMoney-= EventPrice.PRESENTATION.getPrice();
+        int paidMoney = discountAmount;
+        if (benefitList.containsKey("증정 이벤트")) {
+            paidMoney -= EventPrice.PRESENTATION.getPrice();
         }
         outputViewer.printPrice(totalBefore - paidMoney, Messages.OUTPUT_DISCOUNT_AFTER.getMessage());
 
@@ -63,25 +62,37 @@ public class RunApplication {
         Set<Order> orderSet;
         Set<String> orderMenuList;
         MenuList menuList = new MenuList();
+        boolean illegal;
         do {
-            String orders = inputViewer.readOrder();
+            String orders = inputViewer.readOrder().trim();
             orderSet = new HashSet<>();
             orderMenuList = new HashSet<>();
+            illegal= false;
+
             for (String order : orders.split(",")) {
-                Order orderDTO = new Order(order);
-                if (orderMenuList.contains(orderDTO.getMenu())) {
-                    throw new IllegalArgumentException(Messages.ERROR_ORDER.getMessage() + "중복!");
-                } else {
+                try {
+                    Order orderDTO = new Order(order);
+                    if (orderMenuList.contains(orderDTO.getMenu())) {
+                        throw new IllegalArgumentException("중복!");
+                    }
                     orderSet.add(orderDTO);
                     orderMenuList.add(orderDTO.getMenu());
+
+                } catch (IllegalArgumentException e) {
+                    System.out.println(Messages.ERROR_ORDER.getMessage());
+                    illegal= true;
                 }
             }
-        } while (!validateOrder(orderSet));
+        } while (!validateOrder(orderSet)&&illegal);
         return orderSet;
     }
 
     private boolean validateOrder(Set<Order> orders) {
-        return validateOrderMenu(orders) && validateOrderCount(orders);
+        try {
+            return validateOrderMenu(orders) && validateOrderCount(orders);
+        }catch (IllegalArgumentException e){
+            return false;
+        }
     }
 
     private boolean validateOrderMenu(Set<Order> orders) {
