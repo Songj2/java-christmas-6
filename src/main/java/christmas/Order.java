@@ -3,6 +3,9 @@ package christmas;
 import christmas.domain.MenuList;
 import christmas.domain.Messages;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 public class Order {
     private String menu;
@@ -35,7 +38,6 @@ public class Order {
             return true;
         }
         throw new IllegalArgumentException(Messages.ERROR_ORDER.getMessage()+"없는 메뉴");
-//        return false;
     }
 
     private boolean validateCount(String count) {
@@ -43,6 +45,5 @@ public class Order {
             return true;
         }
         throw new IllegalArgumentException(Messages.ERROR_ORDER.getMessage()+"개수 이상");
-//        return false;
     }
 }

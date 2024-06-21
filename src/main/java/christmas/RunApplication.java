@@ -13,40 +13,21 @@ public class RunApplication {
     private InputViewer inputViewer = new InputViewer();
     private Validate validate = new Validate();
     private DateController dateController;
+    private final EventController eventController = new EventController();
+    private Set<Order> orders;
+    Set<String> orderMenuList;
 
     public RunApplication() {
         int date = Integer.parseInt(inputDate());
         dateController = new DateController(date);
         int discountDate = dateController.getDiscountDate();
-        Set<Order> orders = inputOrder();
+        inputOrder();
 
-        EventController eventController = new EventController();
         int totalBefore = eventController.calTotalPriceBeforeDiscount(orders);
-        Map<String, Integer> benefitList = new HashMap<>();
-        if (totalBefore > 10000) {
-            benefitList.put("크리스마스 디데이 할인", eventController.dDayEvent(discountDate));
-            benefitList.put("요일 할인", eventController.weekEvent(date, orders) * EventPrice.DAY_DISCOUNT.getPrice());
-            benefitList.put("특별 할인", eventController.specialDiscount(date));
-            benefitList.put(("증정 이벤트"), eventController.presentationEvent(totalBefore));
-        }
-        int discountAmount = eventController.calTotalDiscount(benefitList);
-        OutputViewer outputViewer = new OutputViewer();
-        outputViewer.printMenu(orders);
-        outputViewer.printPrice(totalBefore, Messages.OUTPUT_DISCOUNT_BEFORE.getMessage());
-        outputViewer.printPresentation(benefitList);
-        outputViewer.printBenefits(benefitList);
-
-        outputViewer.printPrice(discountAmount, Messages.OUTPUT_BENEFITS_PRICE.getMessage());
-
-        int paidMoney = discountAmount;
-        if (benefitList.containsKey("증정 이벤트")) {
-            paidMoney -= EventPrice.PRESENTATION.getPrice();
-        }
-        outputViewer.printPrice(totalBefore - paidMoney, Messages.OUTPUT_DISCOUNT_AFTER.getMessage());
-
-
-        outputViewer.printBadge(discountAmount);
-
+        Map<String, Integer> benefitList = calBenefits(date, discountDate, totalBefore, orders);
+        int benefitAmount = eventController.calTotalDiscount(benefitList);
+        int discountAmount = discountAmount(benefitAmount, benefitList);
+        new OutputViewer(date, orders, totalBefore, benefitAmount,discountAmount, benefitList);
     }
 
     private String inputDate() {
@@ -58,39 +39,42 @@ public class RunApplication {
         return date;
     }
 
-    private Set<Order> inputOrder() {
-        Set<Order> orderSet;
-        Set<String> orderMenuList;
-        MenuList menuList = new MenuList();
+    private void inputOrder() {
         boolean illegal;
         do {
             String orders = inputViewer.readOrder().trim();
-            orderSet = new HashSet<>();
+            this.orders = new HashSet<>();
             orderMenuList = new HashSet<>();
-            illegal= false;
+            illegal = makeOrderSet(orders);
 
-            for (String order : orders.split(",")) {
-                try {
-                    Order orderDTO = new Order(order);
-                    if (orderMenuList.contains(orderDTO.getMenu())) {
-                        throw new IllegalArgumentException("중복!");
-                    }
-                    orderSet.add(orderDTO);
-                    orderMenuList.add(orderDTO.getMenu());
+        } while (validateOrder(orders) && illegal);
+    }
 
-                } catch (IllegalArgumentException e) {
-                    System.out.println(Messages.ERROR_ORDER.getMessage());
-                    illegal= true;
-                }
+    private boolean makeOrderSet(String orders) {
+        for (String order : orders.split(",")) {
+            try {
+                inputOrderCheck(order);
+            } catch (IllegalArgumentException e) {
+                System.out.println(Messages.ERROR_ORDER.getMessage());
+                return true;
             }
-        } while (!validateOrder(orderSet)&&illegal);
-        return orderSet;
+        }
+        return false;
+    }
+
+    private void inputOrderCheck(String order) {
+        Order orderDTO = new Order(order);
+        if (orderMenuList.contains(orderDTO.getMenu())) { //중복확인
+            throw new IllegalArgumentException();
+        }
+        orders.add(orderDTO);
+        orderMenuList.add(orderDTO.getMenu());
     }
 
     private boolean validateOrder(Set<Order> orders) {
         try {
             return validateOrderMenu(orders) && validateOrderCount(orders);
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return false;
         }
     }
@@ -102,8 +86,7 @@ public class RunApplication {
                 return true;
             }
         }
-        throw new IllegalArgumentException(Messages.ERROR_ORDER.getMessage() + "음료만");
-//        return false;
+        throw new IllegalArgumentException();
     }
 
     private boolean validateOrderCount(Set<Order> orders) {
@@ -112,9 +95,26 @@ public class RunApplication {
             count += order.getCount();
         }
         if (count > 20) {
-            throw new IllegalArgumentException(Messages.ERROR_ORDER.getMessage() + "20개 이상");
-//            return false;
+            throw new IllegalArgumentException();
         }
         return true;
+    }
+
+    private Map<String, Integer> calBenefits(int date, int discountDate, int totalBefore, Set<Order> orders) {
+        Map<String, Integer> benefitList = new HashMap<>();
+        if (totalBefore > 10000) {
+            benefitList.put("크리스마스 디데이 할인", eventController.dDayEvent(discountDate));
+            benefitList.put("요일 할인", eventController.weekEvent(date, orders));
+            benefitList.put("특별 할인", eventController.specialDiscount(date));
+            benefitList.put(("증정 이벤트"), eventController.presentationEvent(totalBefore));
+        }
+        return benefitList;
+    }
+
+    private int discountAmount(int price, Map<String, Integer> benefitList) {
+        if (benefitList.containsKey("증정 이벤트")) {
+            price -= EventPrice.PRESENTATION.getPrice();
+        }
+        return price;
     }
 }

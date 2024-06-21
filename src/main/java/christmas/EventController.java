@@ -15,36 +15,46 @@ public class EventController {
 
     public int weekEvent(int date, Set<Order> orders) {
         if (date % 7 == Date.WEEKEND_START.getDate() || date % 7 == Date.WEEKEND_END.getDate()) {
-            return weekendDiscount(orders) * EventPrice.DAY_DISCOUNT.getPrice();
+            return weekendDiscount(orders)* EventPrice.DAY_DISCOUNT.getPrice();
         }
-        return weekdayDiscount(orders);
+        return weekDayDiscount(orders) * EventPrice.DAY_DISCOUNT.getPrice();
     }
 
     private int weekendDiscount(Set<Order> orders) {
-        Main[] mains = Main.values();
         int discount = 0;
         for (Order order : orders) {
-            for (Main main : mains) {
-                if (order.getMenu().equals(main.getMenu())) {
-                    discount += order.getCount();
-                }
+            discount+=compareMain(order);
+        }
+        return discount ;
+
+    }
+    private int compareMain(Order order){
+        Main[] mains = Main.values();
+        for (Main main : mains) {
+            if (order.getMenu().equals(main.getMenu())) {
+                 return order.getCount();
             }
         }
-        return discount + EventPrice.DAY_DISCOUNT.getPrice();
+        return 0;
+    }
+
+    private int weekDayDiscount(Set<Order> orders) {
+        int discount = 0;
+        for (Order order : orders) {
+            discount+=compareDessert(order);
+        }
+        return discount;
 
     }
 
-    private int weekdayDiscount(Set<Order> orders) {
-        Dessert[] mains = Dessert.values();
-        int discount = 0;
-        for (Order order : orders) {
-            for (Dessert dessert : mains) {
+    private int compareDessert(Order order) {
+        Dessert[] desserts = Dessert.values();
+        for (Dessert dessert : desserts) {
                 if (order.getMenu().equals(dessert.getMenu())) {
-                    discount += order.getCount();
+                    return order.getCount();
                 }
-            }
         }
-        return discount;
+        return 0;
     }
 
     public int specialDiscount(int date){

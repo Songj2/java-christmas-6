@@ -9,6 +9,7 @@ public enum Messages {
     ERROR_DATE("[ERROR] 유효하지 않은 날짜입니다. 다시 입력해 주세요."),
     ERROR_ORDER("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요."),
 
+    OUTPUT_START("일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!"),
     OUTPUT_ORDER("<주문 메뉴>"),
     OUTPUT_DISCOUNT_BEFORE("<할인 전 총주문 금액>"),
     OUTPUT_PRESENTATION("<증정 메뉴>"),
