@@ -28,7 +28,6 @@ public class RunApplication {
         int date = Integer.parseInt(inputDate());
         dateController = new DateController(date);
         int discountDate = dateController.getDiscountDate();
-        System.out.println(discountDate);
         inputOrder();
 
         int totalBefore = eventController.calTotalPriceBeforeDiscount(orderSet);

@@ -34,6 +34,7 @@ public class EventController {
     }
     private int compareMain(Order order){
         for (String menu : new MenuList().getMainMenuList().keySet()) {
+            System.out.println(menu+order.getMenu());
             if (order.getMenu().equals(menu)) {
                  return order.getCount();
             }
@@ -44,6 +45,7 @@ public class EventController {
     private int weekDayDiscount(Set<Order> orders) {
         int discount = 0;
         for (Order order : orders) {
+            System.out.println(order.getMenu()+discount);
             discount+=compareDessert(order);
         }
         return discount;
@@ -52,6 +54,7 @@ public class EventController {
 
     private int compareDessert(Order order) {
         for (String menu : new MenuList().getDessertMenuList().keySet()) {
+            System.out.println(menu+order.getMenu());
                 if (order.getMenu().equals(menu)) {
                     return order.getCount();
                 }
