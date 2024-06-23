@@ -1,7 +1,6 @@
-package christmas;
+package christmas.controller;
 
 import christmas.domain.Date;
-import christmas.domain.Messages;
 
 public class DateController {
     private int date;
@@ -17,7 +16,7 @@ public class DateController {
     }
 
     private int dayDiscount(int date){
-        if(date-1< Date.D_DAY.getDate()){
+        if(date<= Date.D_DAY.getDate()){
             return date-1;
         }
         return 0;

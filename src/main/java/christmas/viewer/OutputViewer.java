@@ -1,7 +1,8 @@
-package christmas;
+package christmas.viewer;
 
 import christmas.domain.Badge;
 import christmas.domain.Messages;
+import christmas.domain.Order;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;

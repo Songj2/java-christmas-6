@@ -1,5 +1,7 @@
 package christmas;
 
+import christmas.controller.EventController;
+import christmas.domain.Order;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

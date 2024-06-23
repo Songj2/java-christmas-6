@@ -1,4 +1,4 @@
-package christmas;
+package christmas.util;
 
 import christmas.domain.Date;
 import christmas.domain.Messages;

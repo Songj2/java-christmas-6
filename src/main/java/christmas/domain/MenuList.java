@@ -5,42 +5,48 @@ import java.util.Map;
 
 public class MenuList {
     Map<String, String> menuList;
-    public MenuList(){}
+
+    public MenuList() {
+    }
 
     public Map<String, String> getAllMenuList() {
-        menuList= new HashMap<>();
-        addAppetizer(Appetizer.values());
-        addMain(Main.values());
-        addDessert(Dessert.values());
-        addDrink(Drink.values());
-        return menuList;
-    }
-    public Map<String, String> getOrderableMenuList(){
-        menuList= new HashMap<>();
-        addAppetizer(Appetizer.values());
-        addMain(Main.values());
-        addDessert(Dessert.values());
+        menuList = new HashMap<>();
+        Menu[] menus = Menu.values();
+        for (Menu menu : menus) {
+            menuList.put(menu.getMenu(), menu.name());
+        }
         return menuList;
     }
 
-    private void addAppetizer(Appetizer[] appetizers){
-        for (Appetizer appetizer: appetizers){
-            menuList.put(appetizer.getMenu(), appetizer.name());
+    public Map<String, String> getOrderableMenuList() {
+        menuList = new HashMap<>();
+        Menu[] menus = Menu.values();
+        for (Menu menu : menus) {
+            if (!menu.getType().equals("Drink")) {
+                menuList.put(menu.getMenu(), menu.name());
+            }
         }
+        return menuList;
     }
-    private void addMain(Main[] mains){
-        for(Main main: mains){
-            menuList.put(main.getMenu(), main.name());
+    public Map<String, String> getDessertMenuList() {
+        menuList = new HashMap<>();
+        Menu[] menus = Menu.values();
+        for (Menu menu : menus) {
+            if (menu.getType().equals("Dessert")) {
+                menuList.put(menu.getMenu(), menu.name());
+            }
         }
+        return menuList;
     }
-    private void addDessert(Dessert[] desserts){
-        for (Dessert dessert: desserts){
-            menuList.put(dessert.getMenu(), dessert.name());
+    public Map<String, String> getMainMenuList() {
+        menuList = new HashMap<>();
+        Menu[] menus = Menu.values();
+        for (Menu menu : menus) {
+            if (menu.getType().equals("Main")) {
+                menuList.put(menu.getMenu(), menu.name());
+            }
         }
+        return menuList;
     }
-    private void addDrink(Drink[] drinks){
-        for (Drink drink: drinks){
-            menuList.put(drink.getMenu(), drink.name());
-        }
-    }
+
 }

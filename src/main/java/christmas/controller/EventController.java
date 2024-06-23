@@ -1,5 +1,6 @@
-package christmas;
+package christmas.controller;
 
+import christmas.domain.Order;
 import christmas.domain.*;
 
 import java.util.Map;
@@ -10,7 +11,10 @@ public class EventController {
     }
 
     public int dDayEvent(int discountDay) {
-        return EventPrice.DEFAULT.getPrice() + (discountDay * EventPrice.D_DAY_DISCOUNT.getPrice());
+        if (discountDay!=0){
+            return EventPrice.DEFAULT.getPrice() + (discountDay * EventPrice.D_DAY_DISCOUNT.getPrice());
+        }
+        return 0;
     }
 
     public int weekEvent(int date, Set<Order> orders) {
@@ -29,9 +33,8 @@ public class EventController {
 
     }
     private int compareMain(Order order){
-        Main[] mains = Main.values();
-        for (Main main : mains) {
-            if (order.getMenu().equals(main.getMenu())) {
+        for (String menu : new MenuList().getMainMenuList().keySet()) {
+            if (order.getMenu().equals(menu)) {
                  return order.getCount();
             }
         }
@@ -48,9 +51,8 @@ public class EventController {
     }
 
     private int compareDessert(Order order) {
-        Dessert[] desserts = Dessert.values();
-        for (Dessert dessert : desserts) {
-                if (order.getMenu().equals(dessert.getMenu())) {
+        for (String menu : new MenuList().getDessertMenuList().keySet()) {
+                if (order.getMenu().equals(menu)) {
                     return order.getCount();
                 }
         }

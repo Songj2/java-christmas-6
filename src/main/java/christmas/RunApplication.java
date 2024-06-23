@@ -1,8 +1,14 @@
 package christmas;
 
+import christmas.controller.DateController;
+import christmas.controller.EventController;
 import christmas.domain.EventPrice;
 import christmas.domain.MenuList;
 import christmas.domain.Messages;
+import christmas.domain.Order;
+import christmas.util.Validate;
+import christmas.viewer.InputViewer;
+import christmas.viewer.OutputViewer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,20 +20,22 @@ public class RunApplication {
     private Validate validate = new Validate();
     private DateController dateController;
     private final EventController eventController = new EventController();
-    private Set<Order> orders;
-    Set<String> orderMenuList;
+    private Set<Order> orderSet;
+    private Set<String> orderMenuList;
+    private int menuCount;
 
     public RunApplication() {
         int date = Integer.parseInt(inputDate());
         dateController = new DateController(date);
         int discountDate = dateController.getDiscountDate();
+        System.out.println(discountDate);
         inputOrder();
 
-        int totalBefore = eventController.calTotalPriceBeforeDiscount(orders);
-        Map<String, Integer> benefitList = calBenefits(date, discountDate, totalBefore, orders);
+        int totalBefore = eventController.calTotalPriceBeforeDiscount(orderSet);
+        Map<String, Integer> benefitList = calBenefits(date, discountDate, totalBefore, orderSet);
         int benefitAmount = eventController.calTotalDiscount(benefitList);
         int discountAmount = discountAmount(benefitAmount, benefitList);
-        new OutputViewer(date, orders, totalBefore, benefitAmount,discountAmount, benefitList);
+        new OutputViewer(date, orderSet, totalBefore, benefitAmount, discountAmount, benefitList);
     }
 
     private String inputDate() {
@@ -42,12 +50,12 @@ public class RunApplication {
     private void inputOrder() {
         boolean illegal;
         do {
-            String orders = inputViewer.readOrder().trim();
-            this.orders = new HashSet<>();
+            menuCount = 0;
+            this.orderSet = new HashSet<>();
             orderMenuList = new HashSet<>();
+            String orders = inputViewer.readOrder().trim();
             illegal = makeOrderSet(orders);
-
-        } while (validateOrder(orders) && illegal);
+        } while (!validateOrder() || illegal);
     }
 
     private boolean makeOrderSet(String orders) {
@@ -67,14 +75,16 @@ public class RunApplication {
         if (orderMenuList.contains(orderDTO.getMenu())) { //중복확인
             throw new IllegalArgumentException();
         }
-        orders.add(orderDTO);
+        orderSet.add(orderDTO);
         orderMenuList.add(orderDTO.getMenu());
+        menuCount += orderDTO.getCount();
     }
 
-    private boolean validateOrder(Set<Order> orders) {
+    private boolean validateOrder() {
         try {
-            return validateOrderMenu(orders) && validateOrderCount(orders);
+            return validateOrderMenu(orderSet) && validateOrderCount();
         } catch (IllegalArgumentException e) {
+            System.out.println(Messages.ERROR_ORDER.getMessage());
             return false;
         }
     }
@@ -89,12 +99,8 @@ public class RunApplication {
         throw new IllegalArgumentException();
     }
 
-    private boolean validateOrderCount(Set<Order> orders) {
-        int count = 0;
-        for (Order order : orders) {
-            count += order.getCount();
-        }
-        if (count > 20) {
+    private boolean validateOrderCount() {
+        if (menuCount > 20) {
             throw new IllegalArgumentException();
         }
         return true;

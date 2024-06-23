@@ -1,8 +1,5 @@
 package christmas.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public enum Menu {
     SOUP("appetizer", 6000, "양송이수프"),
     TAPAS("appetizer", 5500, "타파스"),
@@ -23,8 +20,9 @@ public enum Menu {
     private final String type;
     private final int price;
     private final String menu;
+
     Menu(String type, int price, String menu) {
-        this.type= type;
+        this.type = type;
         this.price = price;
         this.menu = menu;
     }
@@ -37,10 +35,8 @@ public enum Menu {
         return menu;
     }
 
-    public String getMenu(String menu){
-        List<String> menuList= new ArrayList<>();
-        menuList.add(getMenu());
-
-        return name();
+    public String getType() {
+        return type;
     }
+
 }

@@ -1,11 +1,6 @@
-package christmas;
+package christmas.domain;
 
-import christmas.domain.MenuList;
-import christmas.domain.Messages;
-
-import java.util.HashSet;
-import java.util.Set;
-
+import christmas.util.Validate;
 
 public class Order {
     private String menu;
@@ -37,13 +32,13 @@ public class Order {
         if (menuList.getAllMenuList().containsKey(menu)){
             return true;
         }
-        throw new IllegalArgumentException(Messages.ERROR_ORDER.getMessage()+"없는 메뉴");
+        throw new IllegalArgumentException();
     }
 
     private boolean validateCount(String count) {
         if (validate.validateNumber(count)){
             return true;
         }
-        throw new IllegalArgumentException(Messages.ERROR_ORDER.getMessage()+"개수 이상");
+        throw new IllegalArgumentException();
     }
 }
